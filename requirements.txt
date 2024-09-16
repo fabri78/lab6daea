@@ -1,0 +1,2 @@
+polars==0.17.2
+pymongo==4.0

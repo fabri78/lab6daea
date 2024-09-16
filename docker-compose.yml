@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api-server:
+    build:
+      context: ./api-server
+      dockerfile: Dockerfile
+    container_name: api-server
+    ports:
+      - "3002:3000"  # Expuesto en el puerto 3002 de la máquina host
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017/movies
+    volumes:
+      - ./api-server:/usr/src/app
+
+  movie-frontend:
+    build:
+      context: ./movie-frontend
+      dockerfile: Dockerfile
+    container_name: movie-frontend
+    ports:
+      - "3000:80"  # Expuesto en el puerto 3000 de la máquina host
+    depends_on:
+      - api-server
+    volumes:
+      - ./movie-frontend:/usr/src/app
+
+volumes:
+  mongo_data:
